@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { connect } from 'react-redux';
-import * as actions from '../../actions'; // import action creators
+import * as actions from '../../actions/actions'; // import action creators
 
 class Signin extends Component {
 	// entire form will be submitted, so just pull off email and password properties
@@ -10,6 +10,16 @@ class Signin extends Component {
 
 		// log user in - call action creator
 		this.props.signinUser({ email, password });
+	}
+
+	renderAlert() {
+		if (this.props.errorMessage) {
+			return (
+				<div className="alert alert-danger">
+					<strong>Oops!</strong> {this.props.errorMessage}
+				</div>
+			);
+		}
 	}
 
 	render() {
@@ -40,17 +50,22 @@ class Signin extends Component {
 						className="form-control" />
 				</fieldset>
 
+				{this.renderAlert()}
 				<button action="submit" className="btn btn-primary">Sign in</button>
 			</form>
 		);
 	}
 }
 
+function mapStateToProps(state) {
+	return { errorMessage: state.auth.error };
+}
+
 // redux form fields config - pass in above component to second function
 // these become available in component as this.props.fields.email, etc..
 
-// connect() to wire up redux: null = mapStateToProps, actions = mapDispatchToProps = action-creators -> made available on this.props above
-export default connect(null, actions)(reduxForm({
+// connect(mapStateToProps, mapDispatchToProps) to wire up redux -> made available on this.props above
+export default connect(mapStateToProps, actions)(reduxForm({
 	form: 'signin'
 })(Signin));
 
