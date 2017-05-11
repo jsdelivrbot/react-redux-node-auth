@@ -13,8 +13,12 @@ const localOptions = {
 const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
 	// Verify the email and password, call done with user if correct, otherwise call done with false
 	User.findOne({ email: email }, function(err, user) {
-		if (err) { return done(err); }
-		if (!user) { return done(null, false); }
+		if (err) {
+			return done(err); 
+		}
+		if (!user) {		 
+			return done(null, false);
+		}
 
 		// compare passwords: salt + request.password = user.password (from db) ?
 		user.comparePassword(password, function(err, isMatch) {

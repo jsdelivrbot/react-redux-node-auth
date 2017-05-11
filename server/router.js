@@ -12,7 +12,7 @@ module.exports = app => {
 	// forward requests to route handlers in controller files
 
 	app.get('/', requireAuth, function(req, res) {
-		res.send('hi');
+		res.send({ message: 'Super secret code is ABC123' });
 	});
 	app.post('/signin', requireSignIn, Authentication.signin);
 	app.post('/signup', Authentication.signup);
