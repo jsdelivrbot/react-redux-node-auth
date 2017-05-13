@@ -3,7 +3,8 @@ import { browserHistory } from 'react-router'; // programmatic navigation
 import { 
 	AUTH_USER,
 	AUTH_ERROR,
-	UNAUTH_USER
+	UNAUTH_USER,
+	FETCH_MESSAGE
 } from './types'; // action-type constants file
 
 const API_ROOT = 'http://localhost:3090';
@@ -38,6 +39,20 @@ export function signinUser({ email, password }) {
 	}
 }
 
+export function signupUser({ email, password }) {
+	return function(dispatch) {
+		axios.post(`${ API_ROOT }/signup`, { email, password })
+			.then(response => {
+				dispatch({ type: AUTH_USER });
+				localStorage.setItem('token', response.data.token);
+				browserHistory.push('/feature');
+			})
+			.catch(response => {
+				dispatch(authError(response.data.error));
+			});
+	}
+}
+
 // action-creator to signal an authentication error
 export function authError(error) {
 	return {
@@ -54,4 +69,20 @@ export function signoutUser() {
 	return {
 		type: UNAUTH_USER
 	};
+}
+
+export function fetchMessage() {
+	return function(dispatch) {
+		axios.get(API_ROOT, {
+			// options object - add JWT in header of request
+			headers: { authorization: localStorage.getItem('token') }
+		})
+			.then(response => {
+				dispatch({
+					type: FETCH_MESSAGE,
+					payload: response.data.message
+				});
+			})
+			.catch();
+	}
 }

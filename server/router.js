@@ -11,9 +11,14 @@ const requireSignIn = passport.authenticate('local', { session: false });
 module.exports = app => {
 	// forward requests to route handlers in controller files
 
+	// request JWT authentication
 	app.get('/', requireAuth, function(req, res) {
 		res.send({ message: 'Super secret code is ABC123' });
 	});
+
+	// email/password (local) authentication
 	app.post('/signin', requireSignIn, Authentication.signin);
+
+	// no authentication
 	app.post('/signup', Authentication.signup);
 }
